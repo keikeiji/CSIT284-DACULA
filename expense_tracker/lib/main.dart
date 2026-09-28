@@ -17,6 +17,7 @@ var kColorScheme = ColorScheme.fromSeed(
 void main() {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: kColorScheme,
         scaffoldBackgroundColor: kCream,
