@@ -39,12 +39,25 @@ class ExpenseItem extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(
-                  categoryIcons[expense.category],
-                  color: const Color(0xFF6B1E2B),
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFC9A66B).withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.receipt_long,
+                    color: Color(0xFF6B1E2B),
+                    size: 20,
+                  ),
                 ),
-                const SizedBox(width: 8),
-                Text(expense.formattedDate),
+                const SizedBox(width: 10),
+                Text(
+                  expense.formattedDate,
+                  style: const TextStyle(
+                    color: Color(0xFF756A65),
+                  ),
+                ),
                 const Spacer(),
                 Text(
                   expense.category.name.toUpperCase(),
@@ -52,6 +65,7 @@ class ExpenseItem extends StatelessWidget {
                     color: Color(0xFF6B1E2B),
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ],

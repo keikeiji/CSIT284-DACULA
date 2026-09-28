@@ -22,7 +22,11 @@ class _NewExpenseState extends State<NewExpense> {
 
   void _presentDatePicker() async {
     final now = DateTime.now();
-    final firstDate = DateTime(now.year - 1, now.month, now.day);
+    final firstDate = DateTime(
+      now.year - 1,
+      now.month,
+      now.day,
+    );
 
     final pickedDate = await showDatePicker(
       context: context,
@@ -37,7 +41,9 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   void _submitExpenseData() {
-    final enteredAmount = double.tryParse(_amountController.text);
+    final enteredAmount = double.tryParse(
+      _amountController.text,
+    );
 
     final amountIsInvalid =
         enteredAmount == null || enteredAmount <= 0;
@@ -93,11 +99,30 @@ class _NewExpenseState extends State<NewExpense> {
           top: Radius.circular(24),
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+      padding: const EdgeInsets.fromLTRB(
+        20,
+        24,
+        20,
+        20,
+      ),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 32,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFC9A66B),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             const Center(
               child: Text(
                 'Add New Expense',
@@ -177,7 +202,7 @@ class _NewExpenseState extends State<NewExpense> {
                   value: _selectedCategory,
                   underline: Container(
                     height: 2,
-                    color: const Color(0xFF6B1E2B),
+                    color: const Color(0xFFC9A66B),
                   ),
                   items: Category.values
                       .map(

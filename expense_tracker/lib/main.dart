@@ -8,8 +8,10 @@ const kMaroon = Color(0xFF6B1E2B);
 const kDeepMaroon = Color(0xFF4A1420);
 const kBurgundy = Color(0xFF8A3948);
 const kDarkBrown = Color(0xFF3B2925);
+const kWarmGray = Color(0xFF756A65);
+const kChampagneGold = Color(0xFFC9A66B);
 
-var kColorScheme = ColorScheme.fromSeed(
+final kColorScheme = ColorScheme.fromSeed(
   seedColor: kMaroon,
   brightness: Brightness.light,
 );
@@ -26,6 +28,7 @@ void main() {
           backgroundColor: kDeepMaroon,
           foregroundColor: Colors.white,
           centerTitle: false,
+          elevation: 0,
         ),
 
         cardTheme: const CardThemeData(
@@ -44,6 +47,9 @@ void main() {
             padding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 12,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),

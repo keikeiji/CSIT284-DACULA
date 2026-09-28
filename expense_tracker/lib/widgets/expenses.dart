@@ -68,9 +68,14 @@ class _ExpensesState extends State<Expenses> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 3),
-        content: const Text('Expense deleted.'),
+        backgroundColor: const Color(0xFF4A1420),
+        content: const Text(
+          'Expense deleted.',
+          style: TextStyle(color: Colors.white),
+        ),
         action: SnackBarAction(
           label: 'Undo',
+          textColor: const Color(0xFFC9A66B),
           onPressed: () {
             setState(() {
               _registeredExpenses.insert(
@@ -87,7 +92,12 @@ class _ExpensesState extends State<Expenses> {
   @override
   Widget build(BuildContext context) {
     Widget mainContent = const Center(
-      child: Text('No expenses found. Start adding some!'),
+      child: Text(
+        'No expenses found. Start adding some!',
+        style: TextStyle(
+          color: Color(0xFF756A65),
+        ),
+      ),
     );
 
     if (_registeredExpenses.isNotEmpty) {
@@ -99,7 +109,20 @@ class _ExpensesState extends State<Expenses> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter ExpenseTracker'),
+        title: Row(
+          children: [
+            const Text('Expense Tracker'),
+            const SizedBox(width: 8),
+            Container(
+              width: 7,
+              height: 7,
+              decoration: const BoxDecoration(
+                color: Color(0xFFC9A66B),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             onPressed: _openAddExpenseOverlay,
@@ -113,34 +136,56 @@ class _ExpensesState extends State<Expenses> {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 16,
+              padding: const EdgeInsets.fromLTRB(
+                20,
+                16,
+                20,
+                18,
               ),
               decoration: BoxDecoration(
                 color: const Color(0xFF6B1E2B),
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF4A1420).withValues(alpha: 0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  const Text(
-                    'TOTAL SPENT',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
+                  Container(
+                    width: 4,
+                    height: 58,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFC9A66B),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '₱${_totalExpenses.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'TOTAL SPENT',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '₱${_totalExpenses.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

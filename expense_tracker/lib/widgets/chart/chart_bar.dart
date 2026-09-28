@@ -22,6 +22,13 @@ class ChartBar extends StatelessWidget {
                 top: Radius.circular(8),
               ),
               color: const Color(0xFF6B1E2B),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFC9A66B).withValues(alpha: 0.18),
+                  blurRadius: 4,
+                  offset: const Offset(0, -1),
+                ),
+              ],
             ),
           ),
         ),
