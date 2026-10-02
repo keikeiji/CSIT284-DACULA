@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:expense_tracker/models/expense.dart';
@@ -22,6 +25,7 @@ class _NewExpenseState extends State<NewExpense> {
 
   void _presentDatePicker() async {
     final now = DateTime.now();
+
     final firstDate = DateTime(
       now.year - 1,
       now.month,
@@ -40,17 +44,26 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
-  void _submitExpenseData() {
-    final enteredAmount = double.tryParse(
-      _amountController.text,
-    );
-
-    final amountIsInvalid =
-        enteredAmount == null || enteredAmount <= 0;
-
-    if (_titleController.text.trim().isEmpty ||
-        amountIsInvalid ||
-        _selectedDate == null) {
+  void _showDialog() {
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (ctx) => CupertinoAlertDialog(
+          title: const Text('Invalid input'),
+          content: const Text(
+            'Please make sure a valid title, amount, date and category was entered.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text('Okay'),
+            ),
+          ],
+        ),
+      );
+    } else {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -68,6 +81,21 @@ class _NewExpenseState extends State<NewExpense> {
           ],
         ),
       );
+    }
+  }
+
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(
+      _amountController.text,
+    );
+
+    final amountIsInvalid =
+        enteredAmount == null || enteredAmount <= 0;
+
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      _showDialog();
       return;
     }
 
@@ -92,161 +120,322 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFF7F1E7),
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        24,
-        20,
-        20,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 32,
-                  height: 3,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFC9A66B),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Center(
-              child: Text(
-                'Add New Expense',
-                style: TextStyle(
-                  color: Color(0xFF4A1420),
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
+
+    return LayoutBuilder(
+      builder: (ctx, constraints) {
+        final width = constraints.maxWidth;
+
+        return SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFF7F1E7),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(24),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _titleController,
-              maxLength: 50,
-              decoration: const InputDecoration(
-                labelText: 'Expense Title',
-                prefixIcon: Icon(
-                  Icons.edit,
-                  color: Color(0xFF6B1E2B),
-                ),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                24,
+                20,
+                keyboardSpace + 20,
               ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      prefixText: '₱ ',
-                      labelText: 'Amount',
-                      prefixIcon: Icon(
-                        Icons.payments_outlined,
-                        color: Color(0xFF6B1E2B),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Text(
-                          _selectedDate == null
-                              ? 'No date'
-                              : formatter.format(_selectedDate!),
-                          textAlign: TextAlign.end,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: _presentDatePicker,
-                        icon: const Icon(
-                          Icons.calendar_month,
-                          color: Color(0xFF6B1E2B),
+                      Container(
+                        width: 32,
+                        height: 3,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFC9A66B),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                const Text(
-                  'Category:',
-                  style: TextStyle(
-                    color: Color(0xFF3B2925),
-                    fontWeight: FontWeight.w600,
+
+                  const SizedBox(height: 16),
+
+                  const Center(
+                    child: Text(
+                      'Add New Expense',
+                      style: TextStyle(
+                        color: Color(0xFF4A1420),
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                DropdownButton<Category>(
-                  value: _selectedCategory,
-                  underline: Container(
-                    height: 2,
-                    color: const Color(0xFFC9A66B),
-                  ),
-                  items: Category.values
-                      .map(
-                        (category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(
-                            category.name.toUpperCase(),
+
+                  const SizedBox(height: 24),
+
+                  // WIDE SCREEN
+                  if (width >= 600)
+                    Row(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _titleController,
+                            maxLength: 50,
+                            decoration:
+                                const InputDecoration(
+                              labelText: 'Expense Title',
+                              prefixIcon: Icon(
+                                Icons.edit,
+                                color: Color(0xFF6B1E2B),
+                              ),
+                            ),
                           ),
                         ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) {
-                      return;
-                    }
+                        const SizedBox(width: 24),
+                        Expanded(
+                          child: TextField(
+                            controller: _amountController,
+                            keyboardType:
+                                TextInputType.number,
+                            decoration:
+                                const InputDecoration(
+                              prefixText: '₱ ',
+                              labelText: 'Amount',
+                              prefixIcon: Icon(
+                                Icons.payments_outlined,
+                                color: Color(0xFF6B1E2B),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    // SMALL SCREEN
+                    TextField(
+                      controller: _titleController,
+                      maxLength: 50,
+                      decoration: const InputDecoration(
+                        labelText: 'Expense Title',
+                        prefixIcon: Icon(
+                          Icons.edit,
+                          color: Color(0xFF6B1E2B),
+                        ),
+                      ),
+                    ),
 
-                    setState(() {
-                      _selectedCategory = value;
-                    });
-                  },
-                ),
-              ],
+                  const SizedBox(height: 8),
+
+                  if (width >= 600)
+                    Row(
+                      children: [
+                        DropdownButton<Category>(
+                          value: _selectedCategory,
+                          underline: Container(
+                            height: 2,
+                            color:
+                                const Color(0xFFC9A66B),
+                          ),
+                          items: Category.values
+                              .map(
+                                (category) =>
+                                    DropdownMenuItem(
+                                  value: category,
+                                  child: Text(
+                                    category.name
+                                        .toUpperCase(),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            if (value == null) {
+                              return;
+                            }
+
+                            setState(() {
+                              _selectedCategory = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 24),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.end,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                _selectedDate == null
+                                    ? 'No date selected'
+                                    : formatter.format(
+                                        _selectedDate!,
+                                      ),
+                              ),
+                              IconButton(
+                                onPressed:
+                                    _presentDatePicker,
+                                icon: const Icon(
+                                  Icons.calendar_month,
+                                  color:
+                                      Color(0xFF6B1E2B),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller:
+                                _amountController,
+                            keyboardType:
+                                TextInputType.number,
+                            decoration:
+                                const InputDecoration(
+                              prefixText: '₱ ',
+                              labelText: 'Amount',
+                              prefixIcon: Icon(
+                                Icons.payments_outlined,
+                                color:
+                                    Color(0xFF6B1E2B),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.end,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _selectedDate == null
+                                      ? 'No date selected'
+                                      : formatter.format(
+                                          _selectedDate!,
+                                        ),
+                                  textAlign:
+                                      TextAlign.end,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed:
+                                    _presentDatePicker,
+                                icon: const Icon(
+                                  Icons.calendar_month,
+                                  color:
+                                      Color(0xFF6B1E2B),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  if (width < 600)
+                    Row(
+                      children: [
+                        const Text(
+                          'Category:',
+                          style: TextStyle(
+                            color: Color(0xFF3B2925),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        DropdownButton<Category>(
+                          value: _selectedCategory,
+                          underline: Container(
+                            height: 2,
+                            color:
+                                const Color(0xFFC9A66B),
+                          ),
+                          items: Category.values
+                              .map(
+                                (category) =>
+                                    DropdownMenuItem(
+                                  value: category,
+                                  child: Text(
+                                    category.name
+                                        .toUpperCase(),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            if (value == null) {
+                              return;
+                            }
+
+                            setState(() {
+                              _selectedCategory = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+
+                  const SizedBox(height: 24),
+
+                  if (width >= 600)
+                    Row(
+                      children: [
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: _submitExpenseData,
+                          icon: const Icon(Icons.check),
+                          label:
+                              const Text('Save Expense'),
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: _submitExpenseData,
+                          icon: const Icon(Icons.check),
+                          label:
+                              const Text('Save Expense'),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton.icon(
-                  onPressed: _submitExpenseData,
-                  icon: const Icon(Icons.check),
-                  label: const Text('Save Expense'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
