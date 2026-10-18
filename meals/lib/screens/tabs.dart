@@ -7,6 +7,8 @@ import 'package:meals/screens/categories.dart';
 import 'package:meals/screens/filters.dart';
 import 'package:meals/screens/meals.dart';
 import 'package:meals/widgets/main_drawer.dart';
+import 'package:meals/screens/about.dart';
+import 'package:meals/screens/settings.dart';
 
 const kInitialFilters = {
   Filter.glutenFree: false,
@@ -61,26 +63,40 @@ class _TabsScreenState extends State<TabsScreen> {
   }
 
   void _setScreen(String identifier) async {
-    Navigator.of(context).pop();
+  Navigator.of(context).pop();
 
-    if (identifier == 'filters') {
-      final result = await Navigator.of(context).push<Map<Filter, bool>>(
-        MaterialPageRoute(
-          builder: (ctx) => FiltersScreen(
-            currentFilters: _selectedFilters,
-          ),
+  if (identifier == 'filters') {
+    final result = await Navigator.of(context).push<Map<Filter, bool>>(
+      MaterialPageRoute(
+        builder: (ctx) => FiltersScreen(
+          currentFilters: _selectedFilters,
         ),
-      );
+      ),
+    );
 
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {
-        _selectedFilters = result ?? _selectedFilters;
-      });
+    if (!mounted) {
+      return;
     }
+
+    setState(() {
+      _selectedFilters = result ?? _selectedFilters;
+    });
+  } else if (identifier == 'settings') {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => const SettingsScreen(),
+      ),
+    );
+  } else if (identifier == 'about') {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => const AboutScreen(),
+      ),
+    );
+  } else if (identifier == 'meals') {
+    _selectPage(0);
   }
+}
 
   @override
   Widget build(BuildContext context) {
