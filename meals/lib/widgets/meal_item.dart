@@ -1,8 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import 'package:meals/widgets/meal_item_trait.dart';
 import 'package:meals/models/meal.dart';
+import 'package:meals/widgets/meal_item_trait.dart';
 
 class MealItem extends StatelessWidget {
   const MealItem({
@@ -26,72 +27,122 @@ class MealItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
-      margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 10,
       ),
       clipBehavior: Clip.hardEdge,
-      elevation: 2,
+      elevation: 3,
+      shadowColor: const Color(0xFF22271C).withValues(alpha: 0.12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(22),
+      ),
       child: InkWell(
-        onTap: () {
-          onSelectMeal(meal);
-        },
+        onTap: () => onSelectMeal(meal),
         child: Stack(
           children: [
             FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
               image: NetworkImage(meal.imageUrl),
               fit: BoxFit.cover,
-              height: 200,
+              height: 250,
               width: double.infinity,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 250,
+                  width: double.infinity,
+                  color: const Color(0xFFE1DAC9),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.restaurant,
+                    size: 48,
+                    color: Color(0xFF4F6B3A),
+                  ),
+                );
+              },
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: Colors.black54,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 6, horizontal: 44),
-                child: Column(
-                  children: [
-                    Text(
-                      meal.title,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis, // Very long text ...
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        MealItemTrait(
-                          icon: Icons.schedule,
-                          label: '${meal.duration} min',
-                        ),
-                        const SizedBox(width: 12),
-                        MealItemTrait(
-                          icon: Icons.work,
-                          label: complexityText,
-                        ),
-                        const SizedBox(width: 12),
-                        MealItemTrait(
-                          icon: Icons.attach_money,
-                          label: affordabilityText,
-                        )
-                      ],
-                    ),
-                  ],
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      const Color(0xFF22271C).withValues(alpha: 0.15),
+                      const Color(0xFF22271C).withValues(alpha: 0.92),
+                    ],
+                    stops: const [0.30, 0.55, 1.0],
+                  ),
                 ),
               ),
-            )
+            ),
+            Positioned(
+              top: 14,
+              right: 14,
+              child: Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFDF8).withValues(alpha: 0.94),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Icon(
+                  Icons.restaurant_menu,
+                  color: colorScheme.primary,
+                  size: 20,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              right: 18,
+              bottom: 18,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    meal.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                          shadows: [
+                            const Shadow(
+                              color: Colors.black26,
+                              blurRadius: 5,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                  ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      MealItemTrait(
+                        icon: Icons.schedule,
+                        label: '${meal.duration} min',
+                      ),
+                      MealItemTrait(
+                        icon: Icons.work_outline,
+                        label: complexityText,
+                      ),
+                      MealItemTrait(
+                        icon: Icons.attach_money,
+                        label: affordabilityText,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
