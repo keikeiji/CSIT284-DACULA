@@ -1,31 +1,22 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:meals2/models/meal.dart';
+import 'package:meals2/providers/favorites_provider.dart';
 
-class MealDetailsScreen extends StatelessWidget {
+class MealDetailsScreen extends ConsumerWidget {
   const MealDetailsScreen({
     super.key,
     required this.meal,
-    required this.onToggleFavorite,
   });
 
   final Meal meal;
-  final void Function(Meal meal) onToggleFavorite;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text(meal.title),
-        actions: [
-          IconButton(
-            onPressed: () {
-              onToggleFavorite(meal);
-            },
-            icon: const Icon(Icons.star),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -39,26 +30,18 @@ class MealDetailsScreen extends StatelessWidget {
             const SizedBox(height: 14),
             Text(
               'Ingredients',
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 14),
             for (final ingredient in meal.ingredients)
               Text(
                 ingredient,
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             const SizedBox(height: 24),
             Text(
               'Steps',
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 14),
             for (final step in meal.steps)
@@ -70,13 +53,30 @@ class MealDetailsScreen extends StatelessWidget {
                 child: Text(
                   step,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          final wasAdded = ref
+              .read(favoriteMealsProvider.notifier)
+              .toggleMealFavoriteStatus(meal);
+
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                wasAdded
+                    ? 'Meal added as a favorite.'
+                    : 'Meal removed from favorites.',
+              ),
+            ),
+          );
+        },
+        child: const Icon(Icons.star),
       ),
     );
   }

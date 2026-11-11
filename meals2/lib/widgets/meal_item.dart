@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:meals2/models/meal.dart';
@@ -20,7 +19,6 @@ class MealItem extends StatelessWidget {
       MaterialPageRoute(
         builder: (ctx) => MealDetailsScreen(
           meal: meal,
-          onToggleFavorite: onToggleFavorite,
         ),
       ),
     );
