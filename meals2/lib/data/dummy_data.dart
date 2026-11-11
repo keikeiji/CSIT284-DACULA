@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import 'package:meals2/models/category.dart';
@@ -170,7 +171,7 @@ const dummyMeals = [
       'Heat the butter and oil in a large pan (allow the fat to get very hot) and fry the schnitzels until golden brown on both sides.',
       'Make sure to toss the pan regularly so that the schnitzels are surrounded by oil and the crumbing becomes ‘fluffy’.',
       'Remove, and drain on kitchen paper. Fry the parsley in the remaining oil and drain.',
-      'Place the schnitzels on awarmed plate and serve garnishedwith parsley and slices of lemon.',
+      'Place the schnitzels on a warmed plate and serve garnished with parsley and slices of lemon.',
     ],
     isGlutenFree: false,
     isVegan: false,
@@ -179,11 +180,7 @@ const dummyMeals = [
   ),
   Meal(
     id: 'm5',
-    categories: [
-      'c2',
-      'c5',
-      'c10',
-    ],
+    categories: ['c2', 'c5', 'c10'],
     title: 'Salad with Smoked Salmon',
     affordability: Affordability.luxurious,
     complexity: Complexity.simple,
