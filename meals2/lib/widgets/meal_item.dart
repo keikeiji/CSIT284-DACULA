@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import 'package:meals2/models/meal.dart';
 import 'package:meals2/screens/meal_details.dart';
@@ -13,6 +14,16 @@ class MealItem extends StatelessWidget {
 
   final Meal meal;
   final void Function(Meal meal) onToggleFavorite;
+
+  String get complexityText {
+    return meal.complexity.name[0].toUpperCase() +
+        meal.complexity.name.substring(1);
+  }
+
+  String get affordabilityText {
+    return meal.affordability.name[0].toUpperCase() +
+        meal.affordability.name.substring(1);
+  }
 
   void selectMeal(BuildContext context) {
     Navigator.of(context).push(
@@ -41,11 +52,12 @@ class MealItem extends StatelessWidget {
           children: [
             Hero(
               tag: meal.id,
-              child: Image.network(
-                meal.imageUrl,
+              child: FadeInImage(
+                placeholder: MemoryImage(kTransparentImage),
+                image: NetworkImage(meal.imageUrl),
+                fit: BoxFit.cover,
                 height: 200,
                 width: double.infinity,
-                fit: BoxFit.cover,
               ),
             ),
             Positioned(
@@ -83,12 +95,12 @@ class MealItem extends StatelessWidget {
                         const SizedBox(width: 12),
                         MealItemTrait(
                           icon: Icons.work,
-                          label: meal.complexity.name,
+                          label: complexityText,
                         ),
                         const SizedBox(width: 12),
                         MealItemTrait(
                           icon: Icons.attach_money,
-                          label: meal.affordability.name,
+                          label: affordabilityText,
                         ),
                       ],
                     ),
